@@ -10,10 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<Context>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DockerConnectionString")));
-builder.Services.AddScoped<ISandwichRepository, SandwichRepository>();
-builder.Services.AddScoped<ISandwichServices, SandwichServices>();
-builder.Services.AddScoped<IExtraRepository, ExtraRepository>();
-builder.Services.AddScoped<IExtraServices, ExtraServices>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductServices, ProductServices>();
 // Add services to the container.

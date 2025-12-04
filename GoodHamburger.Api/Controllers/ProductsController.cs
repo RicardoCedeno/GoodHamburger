@@ -2,7 +2,7 @@
 using GoodHamburger.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GoodHamburger.Api
+namespace GoodHamburger.Api.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
@@ -40,6 +40,23 @@ namespace GoodHamburger.Api
             {
                 rta.IsSuccessful = false;
                 rta.Errors = [$"Ocurrieron los siguientes errores al obtener los extras {ex.Message}: {ex.InnerException?.Message}"];
+            }
+            return rta;
+        }
+
+        [HttpGet("GetAllProducts")]
+        public async Task<ResponseDto<List<GenericProductDto>>> GetAllProducts()
+        {
+            ResponseDto<List<GenericProductDto>> rta = new() { Data = [], IsSuccessful = false, Errors = [] };
+            try
+            {
+                rta.Data = await _productServices.GetAllProducts();
+                rta.IsSuccessful = true;
+            }
+            catch (Exception ex)
+            {
+                rta.IsSuccessful = false;
+                rta.Errors = [$"Ocurrieron los siguientes errores al obtener todos los productos {ex.Message}: {ex.InnerException?.Message}"];
             }
             return rta;
         }

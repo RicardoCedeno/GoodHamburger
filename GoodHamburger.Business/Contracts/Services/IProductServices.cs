@@ -11,5 +11,6 @@ namespace GoodHamburger.Business.Contracts.Services
     {
         Task<List<SandwichDto>> GetAllSandwiches();
         Task<List<ExtraDto>> GetAllExtras();
+        Task<List<GenericProductDto>> GetAllProducts();
     }
 }
