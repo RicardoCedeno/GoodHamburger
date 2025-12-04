@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Docker123
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+      - ./sql/init.sql:/init.sql
+      - ./entrypoint.sh:/entrypoint.sh
+    command: /bin/bash /entrypoint.sh
+
+  goodhamburgerapi:
+    build:
+      context: .
+      dockerfile: GoodHamburger.Api/Dockerfile
+    container_name: goodhamburgerapi
+    depends_on:
+      - sqlserver
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DockerConnectionString=Server=sqlserver;Database=GoodHamburger;User Id=sa;Password=Docker123;TrustServerCertificate=True;
+
+volumes:
+  sql_data:

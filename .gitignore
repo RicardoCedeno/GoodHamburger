@@ -1,0 +1,11 @@
+.vs
+GoodHamburger.Api/bin/*
+GoodHamburger.Api/obj/*
+GoodHamburger.Business/bin/*
+GoodHamburger.Business/obj/*
+GoodHamburger.Entitiees/bin/*
+GoodHamburger.Entities/obj/*
+GoodHamburger.Data/bin/*
+GoodHamburger.Data/obj/*
+GoodHamburger.Models/bin/*
+GoodHamburger.Models/obj/*
