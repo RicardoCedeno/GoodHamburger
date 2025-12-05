@@ -12,7 +12,7 @@ namespace GoodHamburger.Data
     {
         public Context(DbContextOptions<Context> options) : base(options) { }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<Order> OrderDetails { get; set; }
+        public DbSet<Purchase> Purchases { get; set; }
         public DbSet<ItemType> ItemTypes { get; set; }
         public DbSet<Sandwich> Sandwiches { get; set; }
         public DbSet<Extra> Extras { get; set; }
@@ -20,14 +20,12 @@ namespace GoodHamburger.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-
+            modelBuilder.Entity<Purchase>()
+                .HasOne(p => p.Order)
+                .WithMany(o => o.Purchases)
+                .HasForeignKey(p => p.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
             // 🔸 Relaciones (ItemType -> Orders)
-            modelBuilder.Entity<Order>()
-                .HasOne(od => od.ItemType)
-                .WithMany(it => it.Orders)
-                .HasForeignKey(od => od.ItemTypeId);
-
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

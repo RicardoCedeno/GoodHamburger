@@ -9,12 +9,11 @@ using System.Threading.Tasks;
 
 namespace GoodHamburger.Business.Mappers
 {
-    public class OrderMapper: Profile
+    public class PurchaseMapper: Profile
     {
-        public OrderMapper()
+        public PurchaseMapper()
         {
-            CreateMap<Purchase, OrderDto>().ReverseMap();
-
+            CreateMap<Purchase, PurchaseDto>().ReverseMap();
         }
     }
 }

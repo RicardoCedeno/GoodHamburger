@@ -18,10 +18,24 @@ namespace GoodHamburger.Business.Repositories
         private readonly IProductRepository _productRepository = productRepository;
         private readonly IMapper _mapper = mapper;
 
+        public async Task<List<Purchase>> GetAllPurchases()
+        {
+            List<Purchase> rta = [];
+            rta = await _context.Purchases.ToListAsync();
+            return rta;
+        }
+
+        public async Task<List<string>> AddPurchase(Purchase purchase)
+        {
+            List<string> rta = [];
+            _context.Purchases.Add(purchase);
+            int response = await _context.SaveChangesAsync();
+            return response > 0 ? [] : ["Ocurrió un error al agregar la orden"];
+        }
+
         public async Task<List<Order>> GetAllOrders()
         {
-            List<Order> rta = [];
-            rta = await _context.Orders.ToListAsync();
+            List<Order> rta = await _context.Orders.ToListAsync();
             return rta;
         }
     }

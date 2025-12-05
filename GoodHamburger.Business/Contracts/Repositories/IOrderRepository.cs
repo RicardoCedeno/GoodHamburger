@@ -10,6 +10,8 @@ namespace GoodHamburger.Business.Contracts.Repositories
 {
     public interface IOrderRepository
     {
+        Task<List<Purchase>> GetAllPurchases();
+        Task<List<string>> AddPurchase(Purchase order);
         Task<List<Order>> GetAllOrders();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GoodHamburger.Models.Dtos;
+using GoodHamburger.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace GoodHamburger.Business.Contracts.Services
     public interface IOrderServices
     {
         Task<List<OrderDto>> GetAllOrders();
+        Task<List<string>> AddOrder(Purchase order);
     }
 }
