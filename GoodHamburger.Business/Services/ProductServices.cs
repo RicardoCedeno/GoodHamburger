@@ -3,6 +3,7 @@ using GoodHamburger.Business.Contracts.Repositories;
 using GoodHamburger.Business.Contracts.Services;
 using GoodHamburger.Business.Repositories;
 using GoodHamburger.Models.Dtos;
+using GoodHamburger.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

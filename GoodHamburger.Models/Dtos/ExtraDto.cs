@@ -11,5 +11,13 @@ namespace GoodHamburger.Models.Dtos
         public string Id { get; set; } = string.Empty;
         public string ExtraName { get; set; } = string.Empty;
         public double Price { get; set; } = 0;
+
+        public ExtraDto(ExtraDto extra)
+        {
+            Id = extra.Id;
+            ExtraName = extra.ExtraName;
+            Price = extra.Price;
+        }
+        public ExtraDto() { }
     }
 }

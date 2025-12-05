@@ -9,6 +9,6 @@ namespace GoodHamburger.Models.Entities
         [Key]
         public string Id { get; set; } = string.Empty;
         public string ItemName { get; set; } = string.Empty;
-        public List<OrderDetail> OrderDetails { get; set; } = [];
+        public List<Order> Orders { get; set; } = [];
     }
 }

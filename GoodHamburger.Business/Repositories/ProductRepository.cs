@@ -32,5 +32,12 @@ namespace GoodHamburger.Business.Repositories
             rta = _mapper.Map<List<SandwichDto>>(sandwiches);
             return rta;
         }
+
+        public async Task<List<ItemType>> GetItemTypes()
+        {
+            List<ItemType> rta = [];
+            rta = await _context.ItemTypes.ToListAsync();
+            return rta;
+        }
     }
 }

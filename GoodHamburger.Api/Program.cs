@@ -12,6 +12,8 @@ builder.Services.AddDbContext<Context>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DockerConnectionString")));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductServices, ProductServices>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderServices, OrderServices>();
 // Add services to the container.
 
 builder.Services.AddControllers();

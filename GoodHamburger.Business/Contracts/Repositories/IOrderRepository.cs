@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace GoodHamburger.Business.Contracts.Repositories
 {
-    public interface IProductRepository
+    public interface IOrderRepository
     {
-        Task<List<SandwichDto>> GetAllSandwiches();
-        Task<List<ExtraDto>> GetAllExtras();
-        Task<List<ItemType>> GetItemTypes();
+        Task<List<Order>> GetAllOrders();
     }
 }

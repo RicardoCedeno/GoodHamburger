@@ -41,29 +41,17 @@ END
 GO
 
 -- Crear tabla Orders solo si no existe
+
+-- Crear tabla OrderDetails solo si no existe
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Orders' AND xtype='U')
 BEGIN
     CREATE TABLE Orders (
         Id VARCHAR(50) PRIMARY KEY,
-        OrderDate DATETIME DEFAULT GETDATE(),
-        CustomerName VARCHAR(100),
-        Total FLOAT
-    );
-END
-GO
-
--- Crear tabla OrderDetails solo si no existe
-IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='OrderDetails' AND xtype='U')
-BEGIN
-    CREATE TABLE OrderDetails (
-        Id VARCHAR(50) PRIMARY KEY,
-        OrderId VARCHAR(50),
         ItemTypeId VARCHAR(50),
-        ItemId VARCHAR(50),
+        ProductId VARCHAR(50),
         Quantity INT,
         UnitPrice FLOAT,
         SubTotal FLOAT,
-        FOREIGN KEY (OrderId) REFERENCES Orders(Id),
         FOREIGN KEY (ItemTypeId) REFERENCES ItemTypes(Id)
     );
 END
@@ -97,16 +85,11 @@ BEGIN
 END
 GO
 
--- Insertar ejemplo de orden si no existe
 IF NOT EXISTS (SELECT 1 FROM Orders)
 BEGIN
-    INSERT INTO Orders (Id, CustomerName, Total)
-    VALUES ('f37d0aec-f9a3-452f-9323-397baef5e763', 'Ricardo Cedeno', 17.0);
-
-    INSERT INTO OrderDetails (Id, OrderId, ItemTypeId, ItemId, Quantity, UnitPrice, SubTotal)
-    VALUES 
-        (NEWID(), 'f37d0aec-f9a3-452f-9323-397baef5e763', '1', '08d212ed-c3aa-432b-8aed-74c9269abd01', 2, 5.0, 10.0),
-        (NEWID(), 'f37d0aec-f9a3-452f-9323-397baef5e763', '2', '8e85d72f-8fc9-43c2-9667-62af9520686b', 2, 2.0, 4.0),
-        (NEWID(), 'f37d0aec-f9a3-452f-9323-397baef5e763', '2', '798fc00b-8727-46a0-8dd1-4d0c24784271', 1, 2.5, 2.5);
+INSERT INTO Orders (Id, ItemTypeId, ProductId, Quantity, UnitPrice, SubTotal) VALUES 
+    ('7bb5d6bc-ce81-4bba-a5c3-1e10345753bc', '1', '08d212ed-c3aa-432b-8aed-74c9269abd01', 1, 5.0, 5.0),
+    ('4775e09a-0aa1-44c5-88ed-2e401bd7a82e', '2', '8e85d72f-8fc9-43c2-9667-62af9520686b', 1, 2.0,2.0),
+    ('cbcaceee-bfc2-4c25-9b3c-01fe4cd744e9', '2', '798fc00b-8727-46a0-8dd1-4d0c24784271', 1, 2.5, 2.5);
 END
 GO
