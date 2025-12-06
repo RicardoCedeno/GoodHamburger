@@ -19,19 +19,19 @@ namespace GoodHamburger.Business.Services
         private readonly IProductServices _productServices = productServices;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<List<string>> AddOrder(OrderDto order)
+        public async Task<(List<string>, double)> AddOrder(OrderDto order)
         {
             List<string> rta = [];
             Order finalOrder = new();
             double discount = 0;
-            if (order == null) return ["La orden no puede ser nula"];
-            if (order.Purchases == null || !order.Purchases.Any()) return ["La orden debe contener compras"];
+            if (order == null) return (["Order can't be null or empty"], 0);
+            if (order.Purchases == null || !order.Purchases.Any()) return (["The order must contain purchases"], 0);
 
             List<GenericProductDto> genericProducts = await _productServices.GetAllProducts();
 
             #region rule 4
             List<string> orderValidations = StaticMethods.ValidateOrder(order);
-            if (orderValidations.Any()) return orderValidations;
+            if (orderValidations.Any()) return (orderValidations, 0);
             #endregion rule 4
             #region rule 1, rule 2, rule 3
             discount = StaticMethods.GetDiscount(order);
@@ -57,14 +57,14 @@ namespace GoodHamburger.Business.Services
 
             }
             await _orderRepository.AddOrder(finalOrder);
-            return rta;
+            return (rta, finalOrder.Total);
         }
 
         public async Task<List<string>> DeleteOrder(string orderId)
         {
-            if (string.IsNullOrEmpty(orderId)) return ["El id de la orden a remover no puede ser nulo o vacío"];
+            if (string.IsNullOrEmpty(orderId)) return ["The order id to remove can't be null or empty"];
             Order? order = await _orderRepository.GetOrderById(orderId);
-            if (order == null) return ["La orden que intenta remover no existe"];
+            if (order == null) return ["The order you are trying to remove doesn't exist"];
             return await _orderRepository.DeleteOrder(order);
         }
 
@@ -96,11 +96,11 @@ namespace GoodHamburger.Business.Services
             List<string> rta = [];
             List<string> validations = [];
             double discount = 0;
-            if (order == null) return ["La orden a actualizar no puede ser nula"];
-            if (order.Purchases == null || !order.Purchases.Any()) return ["Las orden a actualizar no tiene compras"];
+            if (order == null) return ["Order can't be null"];
+            if (order.Purchases == null || !order.Purchases.Any()) return ["The order doesn't contain purchases"];
 
             Order? existingOrder = await _orderRepository.GetOrderById(order.Id);
-            if (existingOrder == null) return ["La orden a actualizar no existe en la base de datos"];
+            if (existingOrder == null) return ["The order you are trying to update doesn't exist"];
             List<GenericProductDto> genericProducts = await _productServices.GetAllProducts();
 
             List<Purchase>? purchasesToDelete = existingOrder.Purchases.Where(x => !order.Purchases.Any(y => y.Id.ToUpper().Trim() == x.Id.ToUpper().Trim())).ToList();

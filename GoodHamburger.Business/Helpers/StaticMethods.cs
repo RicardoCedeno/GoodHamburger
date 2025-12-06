@@ -14,10 +14,10 @@ namespace GoodHamburger.Business.Helpers
         {
             List<string> rta = [];
             #region rule 4
-            if (order.Purchases.Any(x => x.Quantity > 1)) rta = ["No se permite más de un producto por compra"];
-            if (order.Purchases.Count(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Sandwich.ToUpper().Trim()) != 1) rta = ["La orden solo puede contener un sandwich"];
-            if (order.Purchases.Count(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Extra.ToUpper().Trim()) > 2) rta = ["No se permite mas de dos extra en la orden"];
-            if (order.Purchases.GroupBy(x => x.ItemTypeId).Select(x => x.Key).ToList().Count < 2) rta = ["La orden debe contener al menos un sandwich y un extra"];
+            if (order.Purchases.Any(x => x.Quantity > 1)) rta = ["Only one product per purchase is allowd"];
+            if (order.Purchases.Count(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Sandwich.ToUpper().Trim()) != 1) rta = ["Ech order may contain only one sandwich"];
+            if (order.Purchases.Count(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Extra.ToUpper().Trim()) > 2) rta = ["No more than two extras alle allowed per order"];
+            if (order.Purchases.GroupBy(x => x.ItemTypeId).Select(x => x.Key).ToList().Count < 2) rta = ["The order must include at least one sandwich and one extra"];
 
             return rta;
             #endregion rule 4

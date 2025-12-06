@@ -40,14 +40,14 @@ namespace GoodHamburger.Business.Repositories
         {
             List<string> rta = [];
             await _context.Orders.AddAsync(order);
-            return await _context.SaveChangesAsync() > 0 ? [] : ["Ocurrió un error al agregar la orden. Código error: XXX"];
+            return await _context.SaveChangesAsync() > 0 ? [] : ["An error occurred while adding the order."];
         }
 
         public async Task<List<string>> DeleteOrder(Order order)
         {
             List<string> rta = [];
             _context.Orders.Remove(order);
-            return await _context.SaveChangesAsync() > 0 ? [] : ["Ocurrió un error al eliminar la orden. Código error: XXX"];
+            return await _context.SaveChangesAsync() > 0 ? [] : ["An error occurred while deleting the order"];
         }
 
         public async Task<Order?> GetOrderById(string orderId)
@@ -58,13 +58,13 @@ namespace GoodHamburger.Business.Repositories
         public async Task<List<string>> UpdateOrder(Order order)
         {
             _context.Orders.Update(order);
-            return await _context.SaveChangesAsync() > 0 ? [] : ["Ocurrió un error al actualizar la orden. Código error: XXX"];
+            return await _context.SaveChangesAsync() > 0 ? [] : ["An error occurred while deleting the order"];
         }
 
         public async Task<List<string>> UpdatePurchase(Purchase purchase)
         {
             _context.Purchases.Update(purchase);
-            return await _context.SaveChangesAsync() > 0 ? [] : ["Ocurrió un error al actualizar la compra. Código error: XXX"];
+            return await _context.SaveChangesAsync() > 0 ? [] : ["An error occurred while updating the purchase"];
         }
     }
 }

@@ -11,6 +11,7 @@ namespace GoodHamburger.Models.Dtos
         public T? Data { get; set; }
         public bool IsSuccessful { get; set; } = false;
         public List<string> Errors { get; set; } = [];
+        public dynamic? Others { get; set; }
     }
 
 }

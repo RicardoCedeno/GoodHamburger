@@ -10,6 +10,10 @@ namespace GoodHamburger.Api.Controllers
     {
         private readonly IProductServices _productServices = productServices;
 
+        /// <summary>
+        /// Get all sandwiches
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetAllSandwiches")]
         public async Task<ResponseDto<List<SandwichDto>>> GetAllSandwiches()
         {
@@ -27,6 +31,10 @@ namespace GoodHamburger.Api.Controllers
             return rta;
         }
 
+        /// <summary>
+        /// Get all extras
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetAllExtras")]
         public async Task<ResponseDto<List<ExtraDto>>> GetAllExtras()
         {
@@ -44,6 +52,10 @@ namespace GoodHamburger.Api.Controllers
             return rta;
         }
 
+        /// <summary>
+        /// Get both sandwiches and extras
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetAllProducts")]
         public async Task<ResponseDto<List<GenericProductDto>>> GetAllProducts()
         {

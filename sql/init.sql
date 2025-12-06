@@ -1,4 +1,4 @@
--- Crear base de datos solo si no existe
+-- Create database
 IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'GoodHamburger')
 BEGIN
     CREATE DATABASE GoodHamburger;
@@ -9,10 +9,10 @@ USE GoodHamburger;
 GO
 
 -----------------------------------------------------------
--- TABLAS MAESTRAS
+-- TABLES
 -----------------------------------------------------------
 
--- Crear tabla ItemTypes solo si no existe
+
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='ItemTypes' AND xtype='U')
 BEGIN
     CREATE TABLE ItemTypes (
@@ -22,7 +22,7 @@ BEGIN
 END
 GO
 
--- Crear tabla Sandwiches solo si no existe
+
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Sandwiches' AND xtype='U')
 BEGIN
     CREATE TABLE Sandwiches (
@@ -33,7 +33,7 @@ BEGIN
 END
 GO
 
--- Crear tabla Extras solo si no existe
+
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Extras' AND xtype='U')
 BEGIN
     CREATE TABLE Extras (
@@ -44,11 +44,6 @@ BEGIN
 END
 GO
 
------------------------------------------------------------
--- TABLAS DE ORDENES Y DETALLES
------------------------------------------------------------
-
--- Crear tabla Orders solo si no existe
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Orders' AND xtype='U')
 BEGIN
     CREATE TABLE Orders (
@@ -58,7 +53,7 @@ BEGIN
 END
 GO
 
--- Crear tabla Purchases solo si no existe
+
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Purchases' AND xtype='U')
 BEGIN
 CREATE TABLE Purchases (
@@ -75,11 +70,6 @@ CREATE TABLE Purchases (
 END
 GO
 
------------------------------------------------------------
--- DATOS INICIALES
------------------------------------------------------------
-
--- Insertar registros en ItemTypes solo si no existen
 IF NOT EXISTS (SELECT 1 FROM ItemTypes)
 BEGIN
     INSERT INTO ItemTypes (Id, ItemName) VALUES
@@ -88,7 +78,7 @@ BEGIN
 END
 GO
 
--- Insertar registros en Sandwiches solo si no existen
+
 IF NOT EXISTS (SELECT 1 FROM Sandwiches)
 BEGIN
     INSERT INTO Sandwiches (Id, SandwichName, Price) VALUES
@@ -98,7 +88,7 @@ BEGIN
 END
 GO
 
--- Insertar registros en Extras solo si no existen
+
 IF NOT EXISTS (SELECT 1 FROM Extras)
 BEGIN
     INSERT INTO Extras (Id, ExtraName, Price) VALUES
@@ -107,26 +97,20 @@ BEGIN
 END
 GO
 
--- Insertar registros en Orders solo si no existen
+
 IF NOT EXISTS (SELECT 1 FROM Orders)
 BEGIN
     INSERT INTO Orders (Id, Total) VALUES
-    ('11111111-aaaa-4444-bbbb-000000000001', 7.0),  -- Pedido con un sandwich y un extra
-    ('22222222-bbbb-5555-cccc-000000000002', 9.5); -- Pedido con otro sandwich y 2 extras
+    ('ff19e4e6-236e-4dd9-8b7e-3b113b8adef2', 5)
 END
 GO
 
--- Insertar registros en Purchases solo si no existen
+
 IF NOT EXISTS (SELECT 1 FROM Purchases)
 BEGIN
     INSERT INTO Purchases (Id, OrderId, ItemTypeId, ProductId, Quantity, UnitPrice, SubTotal) VALUES
-    -- Orden 1: Burger + Fries
-    ('a1a1a1a1-aaaa-1111-bbbb-000000000001', '11111111-aaaa-4444-bbbb-000000000001', '1', '08d212ed-c3aa-432b-8aed-74c9269abd01', 1, 5.0, 5.0),
-    ('a1a1a1a1-aaaa-1111-bbbb-000000000002', '11111111-aaaa-4444-bbbb-000000000001', '2', '8e85d72f-8fc9-43c2-9667-62af9520686b', 1, 2.0, 2.0),
 
-    -- Orden 2: Bacon + Fries + Soft drink
-    ('b2b2b2b2-bbbb-2222-cccc-000000000001', '22222222-bbbb-5555-cccc-000000000002', '1', 'b4a7c952-21f1-47bc-b403-64c88aae6d61', 1, 7.0, 7.0),
-    ('b2b2b2b2-bbbb-2222-cccc-000000000002', '22222222-bbbb-5555-cccc-000000000002', '2', '8e85d72f-8fc9-43c2-9667-62af9520686b', 1, 2.0, 2.0),
-    ('b2b2b2b2-bbbb-2222-cccc-000000000003', '22222222-bbbb-5555-cccc-000000000002', '2', '798fc00b-8727-46a0-8dd1-4d0c24784271', 1, 2.5, 2.5);
+    ('a75592dc-582d-41df-9319-292fec63cdf4', 'ff19e4e6-236e-4dd9-8b7e-3b113b8adef2', '2', '798fc00b-8727-46a0-8dd1-4d0c24784271', 1, 2.5, 2.5),
+    ('b7f40023-c73c-4fc2-ba01-749c32695497', 'ff19e4e6-236e-4dd9-8b7e-3b113b8adef2', '1', '08d212ed-c3aa-432b-8aed-74c9269abd01', 1, 5, 5)
 END
 GO

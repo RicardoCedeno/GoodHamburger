@@ -5,6 +5,7 @@ using GoodHamburger.Business.Contracts.Repositories;
 using GoodHamburger.Business.Repositories;
 using GoodHamburger.Business.Contracts.Services;
 using GoodHamburger.Business.Services;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -20,6 +21,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+builder.Services.AddSwaggerGen(x =>
+{
+    x.IncludeXmlComments(xmlPath);
+});
 
 var app = builder.Build();
 
