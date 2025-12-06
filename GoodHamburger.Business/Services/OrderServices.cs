@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GoodHamburger.Business.Contracts.Repositories;
 using GoodHamburger.Business.Contracts.Services;
+using GoodHamburger.Business.Helpers;
 using GoodHamburger.Models.Dtos;
 using GoodHamburger.Models.Entities;
 using System;
@@ -18,11 +19,65 @@ namespace GoodHamburger.Business.Services
         private readonly IProductServices _productServices = productServices;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<List<string>> AddOrder(Purchase order)
+        public async Task<List<string>> AddOrder(OrderDto order)
         {
             List<string> rta = [];
-            //if (order == null || string.IsNullOrEmpty(order.Id)) return ["La orden no puede ser nula"];
-            //if(string.IsNullOrEmpty(order.ProductId)) return 
+            Order finalOrder = new();
+            double discount = 0;
+            if (order == null) return ["La orden no puede ser nula"];
+            if (order.Purchases == null || !order.Purchases.Any()) return ["La orden debe contener compras"];
+
+            List<GenericProductDto> genericProducts = await _productServices.GetAllProducts();
+
+            #region rule 4
+
+            if (order.Purchases.Any(x => x.Quantity > 1)) return ["No se permite más de un producto por compra"];
+            if (order.Purchases.Count(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Sandwich.ToUpper().Trim()) != 1) return ["La orden solo puede contener un sandwich"];
+            if (order.Purchases.Count(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Extra.ToUpper().Trim()) >= 2) return ["No se permite mas de dos extra en la orden"];
+            if (order.Purchases.GroupBy(x => x.ItemTypeId).Select(x => x.Key).ToList().Count < 2) return ["La orden debe contener al menos un sandwich y un extra"];
+            #endregion rule 4
+            #region rule 1
+            if(order.Purchases.Where(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Sandwich.ToUpper().Trim()).ToList().Count == 1 
+                && order.Purchases.Where(x=>x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Extra.ToUpper().Trim()).ToList().Count == 2)
+            {
+                discount = 0.20;
+            }
+            #region rule 2
+            else if(order.Purchases.Where(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Sandwich.ToUpper().Trim()).ToList().Count() == 1
+                && order.Purchases.Select(x => x.ProductId.ToUpper().Trim()).Contains(StaticStructs.ProductsId.SoftDrink.ToUpper().Trim()))
+            {
+                discount = 0.15;
+            }
+            #endregion rule 2
+            #region rule3
+            else if (order.Purchases.Where(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Sandwich.ToUpper().Trim()).ToList().Count() == 1
+                && order.Purchases.Select(x => x.ProductId.ToUpper().Trim()).Contains(StaticStructs.ProductsId.Fries.ToUpper().Trim()))
+            {
+                discount = 0.10;
+            }
+            #endregion rule 3
+
+            finalOrder.Id = Guid.NewGuid().ToString();
+            foreach (PurchaseDto item in order.Purchases)
+            {
+                double unitPrice = genericProducts.FirstOrDefault(x => x.Id.ToUpper().Trim() == item.ProductId.ToUpper().Trim())?.Price ?? 0;
+                Purchase purchase = new()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    ProductId = item.ProductId,
+                    ItemTypeId = item.ItemTypeId,
+                    OrderId = order.Id,
+                    Quantity = item.Quantity,
+                    UnitPrice = unitPrice,
+                    SubTotal = unitPrice * item.Quantity,
+                };
+                purchase.ItemType = null!;
+                finalOrder.Purchases.Add(purchase);
+                finalOrder.Total += purchase.SubTotal * (1-discount);
+
+            }
+            await _orderRepository.AddOrder(finalOrder);
+            #endregion rule 1
             return rta;
         }
 

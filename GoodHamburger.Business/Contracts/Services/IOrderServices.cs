@@ -11,6 +11,6 @@ namespace GoodHamburger.Business.Contracts.Services
     public interface IOrderServices
     {
         Task<List<OrderDto>> GetAllOrders();
-        Task<List<string>> AddOrder(Purchase order);
+        Task<List<string>> AddOrder(OrderDto order);
     }
 }

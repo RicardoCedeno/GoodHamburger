@@ -27,7 +27,6 @@ namespace GoodHamburger.Business.Repositories
 
         public async Task<List<string>> AddPurchase(Purchase purchase)
         {
-            List<string> rta = [];
             _context.Purchases.Add(purchase);
             int response = await _context.SaveChangesAsync();
             return response > 0 ? [] : ["Ocurrió un error al agregar la orden"];
@@ -37,6 +36,13 @@ namespace GoodHamburger.Business.Repositories
         {
             List<Order> rta = await _context.Orders.ToListAsync();
             return rta;
+        }
+
+        public async Task<List<string>> AddOrder(Order order)
+        {
+            List<string> rta = [];
+            await _context.Orders.AddAsync(order);
+            return await _context.SaveChangesAsync() > 0 ? [] : ["Ocurrió un error al agregar la orden. Código error: XXX"];
         }
     }
 }
