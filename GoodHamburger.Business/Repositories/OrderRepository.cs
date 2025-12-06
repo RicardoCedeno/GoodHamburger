@@ -12,11 +12,9 @@ using System.Threading.Tasks;
 
 namespace GoodHamburger.Business.Repositories
 {
-    public class OrderRepository(Context context, IProductRepository productRepository, IMapper mapper): IOrderRepository
+    public class OrderRepository(Context context): IOrderRepository
     {
         private readonly Context _context = context;
-        private readonly IProductRepository _productRepository = productRepository;
-        private readonly IMapper _mapper = mapper;
 
         public async Task<List<Purchase>> GetAllPurchases()
         {
@@ -43,6 +41,24 @@ namespace GoodHamburger.Business.Repositories
             List<string> rta = [];
             await _context.Orders.AddAsync(order);
             return await _context.SaveChangesAsync() > 0 ? [] : ["Ocurrió un error al agregar la orden. Código error: XXX"];
+        }
+
+        public async Task<List<string>> DeleteOrder(Order order)
+        {
+            List<string> rta = [];
+            _context.Orders.Remove(order);
+            return await _context.SaveChangesAsync() > 0 ? [] : ["Ocurrió un error al eliminar la orden. Código error: XXX"];
+        }
+
+        public async Task<Order?> GetOrderById(string orderId)
+        {
+            return await _context.Orders.FirstOrDefaultAsync(x => x.Id.ToUpper().Trim() == orderId.ToUpper().Trim());
+        }
+
+        public async Task<List<string>> UpdateOrder(Order order)
+        {
+            _context.Orders.Update(order);
+            return await _context.SaveChangesAsync() > 0 ? [] : ["Ocurrió un error al actualizar la orden. Código error: XXX"];
         }
     }
 }

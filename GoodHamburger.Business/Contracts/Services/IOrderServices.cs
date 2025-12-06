@@ -12,5 +12,6 @@ namespace GoodHamburger.Business.Contracts.Services
     {
         Task<List<OrderDto>> GetAllOrders();
         Task<List<string>> AddOrder(OrderDto order);
+        Task<List<string>> DeleteOrder(string orderId);
     }
 }

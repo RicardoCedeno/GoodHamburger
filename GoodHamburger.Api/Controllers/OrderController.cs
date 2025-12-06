@@ -46,5 +46,24 @@ namespace GoodHamburger.Api.Controllers
             return rta;
         }
 
+        [HttpDelete("DeleteOrder/{orderId}")]
+        public async Task<ResponseDto<int>> DeleteOrder([FromRoute] string orderId)
+        {
+            ResponseDto<int> rta = new() { Data = 0, Errors = [], IsSuccessful = false };
+            try
+            {
+                rta.Errors = await _orderServices.DeleteOrder(orderId);
+                rta.IsSuccessful = true;
+                rta.Data = 1;
+            }
+            catch (Exception ex)
+            {
+                rta.IsSuccessful = false;
+                rta.Errors = [$"Ocurrieron los siguientes errores al agregar las ordenes {ex.Message}: {ex.InnerException?.Message}"];
+                rta.Data = 0;
+            }
+            return rta;
+        }
+
     }
 }

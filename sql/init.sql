@@ -61,17 +61,17 @@ GO
 -- Crear tabla Purchases solo si no existe
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Purchases' AND xtype='U')
 BEGIN
-    CREATE TABLE Purchases (
-        Id VARCHAR(50) PRIMARY KEY,
-        OrderId VARCHAR(50),
-        ItemTypeId VARCHAR(50),
-        ProductId VARCHAR(50),
-        Quantity INT,
-        UnitPrice FLOAT,
-        SubTotal FLOAT,
-        FOREIGN KEY (OrderId) REFERENCES Orders(Id),
-        FOREIGN KEY (ItemTypeId) REFERENCES ItemTypes(Id)
-    );
+CREATE TABLE Purchases (
+    Id VARCHAR(50) PRIMARY KEY,
+    OrderId VARCHAR(50),
+    ItemTypeId VARCHAR(50),
+    ProductId VARCHAR(50),
+    Quantity INT,
+    UnitPrice FLOAT,
+    SubTotal FLOAT,
+    FOREIGN KEY (OrderId) REFERENCES Orders(Id) ON DELETE CASCADE,
+    FOREIGN KEY (ItemTypeId) REFERENCES ItemTypes(Id)
+);
 END
 GO
 

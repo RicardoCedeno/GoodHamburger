@@ -33,7 +33,7 @@ namespace GoodHamburger.Business.Services
 
             if (order.Purchases.Any(x => x.Quantity > 1)) return ["No se permite más de un producto por compra"];
             if (order.Purchases.Count(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Sandwich.ToUpper().Trim()) != 1) return ["La orden solo puede contener un sandwich"];
-            if (order.Purchases.Count(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Extra.ToUpper().Trim()) >= 2) return ["No se permite mas de dos extra en la orden"];
+            if (order.Purchases.Count(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Extra.ToUpper().Trim()) > 2) return ["No se permite mas de dos extra en la orden"];
             if (order.Purchases.GroupBy(x => x.ItemTypeId).Select(x => x.Key).ToList().Count < 2) return ["La orden debe contener al menos un sandwich y un extra"];
             #endregion rule 4
             #region rule 1
@@ -79,6 +79,14 @@ namespace GoodHamburger.Business.Services
             await _orderRepository.AddOrder(finalOrder);
             #endregion rule 1
             return rta;
+        }
+
+        public async Task<List<string>> DeleteOrder(string orderId)
+        {
+            if (string.IsNullOrEmpty(orderId)) return ["El id de la orden a remover no puede ser nulo o vacío"];
+            Order? order = await _orderRepository.GetOrderById(orderId);
+            if (order == null) return ["La orden que intenta remover no existe"];
+            return await _orderRepository.DeleteOrder(order);
         }
 
         public async Task<List<OrderDto>> GetAllOrders()
