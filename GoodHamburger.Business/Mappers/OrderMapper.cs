@@ -13,7 +13,7 @@ namespace GoodHamburger.Business.Mappers
     {
         public OrderMapper()
         {
-            CreateMap<Purchase, OrderDto>().ReverseMap();
+            CreateMap<Order, OrderDto>().ReverseMap();
 
         }
     }

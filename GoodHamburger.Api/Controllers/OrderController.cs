@@ -59,11 +59,29 @@ namespace GoodHamburger.Api.Controllers
             catch (Exception ex)
             {
                 rta.IsSuccessful = false;
-                rta.Errors = [$"Ocurrieron los siguientes errores al agregar las ordenes {ex.Message}: {ex.InnerException?.Message}"];
+                rta.Errors = [$"Ocurrieron los siguientes errores al eliminar la orden {ex.Message}: {ex.InnerException?.Message}"];
                 rta.Data = 0;
             }
             return rta;
         }
 
+        [HttpPut("UpdateOrder")]
+        public async Task<ResponseDto<int>> UpdateOrder([FromBody] OrderDto order)
+        {
+            ResponseDto<int> rta = new() { Data = 0, Errors = [], IsSuccessful = false };
+            try
+            {
+                rta.Errors = await _orderServices.UpdateOrder(order);
+                rta.IsSuccessful = true;
+                rta.Data = 1;
+            }
+            catch (Exception ex)
+            {
+                rta.IsSuccessful = false;
+                rta.Errors = [$"Ocurrieron los siguientes errores al actualizar la ordern {ex.Message}: {ex.InnerException?.Message}"];
+                rta.Data = 0;
+            }
+            return rta;
+        }
     }
 }

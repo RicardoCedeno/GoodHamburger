@@ -52,13 +52,19 @@ namespace GoodHamburger.Business.Repositories
 
         public async Task<Order?> GetOrderById(string orderId)
         {
-            return await _context.Orders.FirstOrDefaultAsync(x => x.Id.ToUpper().Trim() == orderId.ToUpper().Trim());
+            return await _context.Orders.Include(y=>y.Purchases).FirstOrDefaultAsync(x => x.Id.ToUpper().Trim() == orderId.ToUpper().Trim());
         }
 
         public async Task<List<string>> UpdateOrder(Order order)
         {
             _context.Orders.Update(order);
             return await _context.SaveChangesAsync() > 0 ? [] : ["Ocurrió un error al actualizar la orden. Código error: XXX"];
+        }
+
+        public async Task<List<string>> UpdatePurchase(Purchase purchase)
+        {
+            _context.Purchases.Update(purchase);
+            return await _context.SaveChangesAsync() > 0 ? [] : ["Ocurrió un error al actualizar la compra. Código error: XXX"];
         }
     }
 }

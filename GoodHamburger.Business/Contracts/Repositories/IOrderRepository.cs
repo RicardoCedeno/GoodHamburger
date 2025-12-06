@@ -16,5 +16,6 @@ namespace GoodHamburger.Business.Contracts.Repositories
         Task<List<string>> AddOrder(Order order);
         Task<List<string>> DeleteOrder(Order order);
         Task<Order?> GetOrderById(string orderId);
+        Task<List<string>> UpdateOrder(Order order);
     }
 }

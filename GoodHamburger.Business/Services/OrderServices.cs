@@ -30,32 +30,12 @@ namespace GoodHamburger.Business.Services
             List<GenericProductDto> genericProducts = await _productServices.GetAllProducts();
 
             #region rule 4
-
-            if (order.Purchases.Any(x => x.Quantity > 1)) return ["No se permite más de un producto por compra"];
-            if (order.Purchases.Count(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Sandwich.ToUpper().Trim()) != 1) return ["La orden solo puede contener un sandwich"];
-            if (order.Purchases.Count(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Extra.ToUpper().Trim()) > 2) return ["No se permite mas de dos extra en la orden"];
-            if (order.Purchases.GroupBy(x => x.ItemTypeId).Select(x => x.Key).ToList().Count < 2) return ["La orden debe contener al menos un sandwich y un extra"];
+            List<string> orderValidations = StaticMethods.ValidateOrder(order);
+            if (orderValidations.Any()) return orderValidations;
             #endregion rule 4
-            #region rule 1
-            if(order.Purchases.Where(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Sandwich.ToUpper().Trim()).ToList().Count == 1 
-                && order.Purchases.Where(x=>x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Extra.ToUpper().Trim()).ToList().Count == 2)
-            {
-                discount = 0.20;
-            }
-            #region rule 2
-            else if(order.Purchases.Where(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Sandwich.ToUpper().Trim()).ToList().Count() == 1
-                && order.Purchases.Select(x => x.ProductId.ToUpper().Trim()).Contains(StaticStructs.ProductsId.SoftDrink.ToUpper().Trim()))
-            {
-                discount = 0.15;
-            }
-            #endregion rule 2
-            #region rule3
-            else if (order.Purchases.Where(x => x.ItemTypeId.ToUpper().Trim() == StaticStructs.ProductTypesId.Sandwich.ToUpper().Trim()).ToList().Count() == 1
-                && order.Purchases.Select(x => x.ProductId.ToUpper().Trim()).Contains(StaticStructs.ProductsId.Fries.ToUpper().Trim()))
-            {
-                discount = 0.10;
-            }
-            #endregion rule 3
+            #region rule 1, rule 2, rule 3
+            discount = StaticMethods.GetDiscount(order);
+            #endregion rule 1, rule 2, rule 3
 
             finalOrder.Id = Guid.NewGuid().ToString();
             foreach (PurchaseDto item in order.Purchases)
@@ -77,7 +57,6 @@ namespace GoodHamburger.Business.Services
 
             }
             await _orderRepository.AddOrder(finalOrder);
-            #endregion rule 1
             return rta;
         }
 
@@ -110,6 +89,71 @@ namespace GoodHamburger.Business.Services
                    })];
             return rta;
 
+        }
+
+        public async Task<List<string>> UpdateOrder(OrderDto order)
+        {
+            List<string> rta = [];
+            List<string> validations = [];
+            double discount = 0;
+            if (order == null) return ["La orden a actualizar no puede ser nula"];
+            if (order.Purchases == null || !order.Purchases.Any()) return ["Las orden a actualizar no tiene compras"];
+
+            Order? existingOrder = await _orderRepository.GetOrderById(order.Id);
+            if (existingOrder == null) return ["La orden a actualizar no existe en la base de datos"];
+            List<GenericProductDto> genericProducts = await _productServices.GetAllProducts();
+
+            List<Purchase>? purchasesToDelete = existingOrder.Purchases.Where(x => !order.Purchases.Any(y => y.Id.ToUpper().Trim() == x.Id.ToUpper().Trim())).ToList();
+            if (purchasesToDelete.Any())
+            {
+                foreach(Purchase purchase in purchasesToDelete)
+                {
+                    existingOrder.Purchases.Remove(purchase);
+                }
+            }
+            existingOrder.Total = 0;
+            foreach(PurchaseDto item in order.Purchases)
+            {
+                Purchase? existingPurchase = existingOrder.Purchases.FirstOrDefault(x => x.Id.ToUpper().Trim() ==  item.Id.ToUpper().Trim());
+                double unitPrice = genericProducts.FirstOrDefault(x => x.Id.ToUpper().Trim() == item.ProductId.ToUpper().Trim())?.Price ?? 0;
+                double subTotal = unitPrice * item.Quantity * (1 - discount);
+
+                if(existingPurchase != null)
+                {
+                    existingPurchase.ProductId = item.ProductId;
+                    existingPurchase.ItemTypeId = item.ItemTypeId;
+                    existingPurchase.Quantity = item.Quantity;
+                    existingPurchase.UnitPrice = unitPrice;
+                    existingPurchase.SubTotal = subTotal;
+                }
+                else
+                {
+                    Purchase newPurchase = new()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        ProductId = item.ProductId,
+                        ItemTypeId = item.ItemTypeId,
+                        Quantity = item.Quantity,
+                        UnitPrice = unitPrice,
+                        SubTotal = subTotal,
+                        OrderId = existingOrder.Id
+                    };
+                    newPurchase.ItemType = null!;
+                    existingOrder.Purchases.Add(newPurchase);
+                }
+                existingOrder.Total += subTotal;
+            }
+            #region rule 4
+            OrderDto existingOrderDto = _mapper.Map<OrderDto>(existingOrder);
+            List<string> orderValidations = StaticMethods.ValidateOrder(existingOrderDto);
+            if (orderValidations.Any()) return orderValidations;
+            #endregion rule 4
+            #region rule 1, rule 2, rule 3
+            discount = StaticMethods.GetDiscount(existingOrderDto);
+            #endregion rule 1, rule 2, rule 3
+            await _orderRepository.UpdateOrder(existingOrder);
+
+            return rta;
         }
 
     }
